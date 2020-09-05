@@ -191,7 +191,7 @@ components:
           type: string
         location:
           type: string
-        unitOfMeasure:
+        UOM:
           type: string
         countryAttribute:
           type: string #todo this should be an attribute
