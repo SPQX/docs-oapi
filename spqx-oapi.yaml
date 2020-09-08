@@ -146,7 +146,7 @@ paths:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/NewUnit'
+                  $ref: '#/components/schemas/Unit'
       tags:
         - "Units"
     put:
@@ -194,22 +194,90 @@ paths:
         - "Units"
   /products/{product-id}/{unit-id}/tasks:
     get:
-      summary: Get a product configuration
+      summary: Get a list of configured tasks
       description: >
-        This resource provides the product configuration for the
-        product for the given unique product `id` in the path.
+        This resource provides a list of task configurations for the
+        unit with the given unique `unit-id` in the path.
+        The given `product-id` must match the correct unique id for the provided unit.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
       responses:
-
+        '200':
+          description: A JSON list of Tasks
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+      tags:
+        - "Tasks"
+    post:
+      summary: Configure a new tasks
+      description: >
+        This resource creates a new task configurations for the
+        unit with the given unique `unit-id` in the path.
+        The given `product-id` must match the correct unique id for the provided unit.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+      requestBody:
+        $ref: '#/components/requestBodies/NewTaskBody'
+      responses:
+        '200':
+          description: A JSON list of Tasks
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+      tags:
+        - "Tasks"
+    put:
+      summary: Replace a task configuration
+      description: >
+        This resource overwrites a task configurations for the
+        unit with the given unique `unit-id` in the path.
+        The given `product-id` must match the correct unique id for the provided unit.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+      requestBody:
+        $ref: '#/components/requestBodies/TaskBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/TaskResponse'
       tags:
         - "Tasks"
   /products/{product-id}/{unit-id}/tasks/{task-id}:
     get:
-      summary: Get a product configuration
+      summary: Get a task configuration
       description: >
-        This resource provides the product configuration for the
-        product for the given unique product `id` in the path.
+        This resource provides the task configuration for the
+        task with the given unique `task-id` in the path.
+        Supplied `product-id` and `unit-id` must also be correct.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+        - $ref: '#/components/parameters/taskId'
       responses:
-
+        '200':
+          $ref: '#/components/responses/TaskResponse'
+      tags:
+        - "Tasks"
+    delete:
+      summary: Delete a task configuration
+      description: >
+        This resource removes the task configuration for the
+        task with the given unique `task-id` in the path.
+        Supplied `product-id` and `unit-id` must also be correct.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+        - $ref: '#/components/parameters/taskId'
+      responses:
+        '204':
+          description: Successfully removed the resource, no content will be returned
       tags:
         - "Tasks"
   /products/{product-id}/{unit-id}/{task-id}/subtasks:
@@ -276,6 +344,35 @@ components:
             productId:
               type: integer
         - $ref: '#/components/schemas/NewUnit'
+    NewTask:
+      allOf:
+        - $ref: '#/components/schemas/NewUnit'
+        - properties:
+            resourceAttr:
+              type: string
+            resource:
+              type: string
+            hoursFormula:
+              type: string
+            hours:
+              type: integer
+            standardHoursFormula:
+              type: string
+            standardHours:
+              type: integer
+            efficientHoursFormula:
+              type: string
+            efficientHours:
+              type: integer
+    Task:
+      allOf:
+        - properties:
+            id:
+              type: integer
+            unitId:
+              type: integer
+        - $ref: '#/components/schemas/NewTask'
+
   requestBodies:
     ProductBody:
       description: A JSON object representation of a Product
@@ -305,6 +402,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/NewUnit'
+    TaskBody:
+      description: A JSON object representation of a Task
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Task'
+    NewTaskBody:
+      description: A JSON object representation of a Task
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewTask'
   responses:
     ProductResponse:
       description: A JSON object representation of a Product
@@ -318,6 +429,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Unit'
+    TaskResponse:
+      description: A JSON object representation of a Task
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Task'
   securitySchemes:
     bearerAuth:
       type: http
@@ -338,5 +455,12 @@ components:
       schema:
         type: integer
       description: Numberic id of the unit
+    taskId:
+      in: path
+      name: task-id
+      required: true
+      schema:
+        type: integer
+      description: Numberic id of the task
 security:
   - bearerAuth: []
