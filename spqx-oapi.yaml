@@ -282,22 +282,98 @@ paths:
         - "Tasks"
   /products/{product-id}/{unit-id}/{task-id}/subtasks:
     get:
-      summary: Get a product configuration
+      summary: Get a list of configured subtasks
       description: >
-        This resource provides the product configuration for the
-        product for the given unique product `id` in the path.
+        This resource provides a list of subtask configurations for the
+        unit with the given unique `task-id` in the path.
+        The given `unit-id` and `product-id` must match the correct
+        unique ids for the provided task.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+        - $ref: '#/components/parameters/taskId'
       responses:
-
+        '200':
+          description: A JSON list of SubTasks
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SubTask'
+      tags:
+        - "Sub Tasks"
+    post:
+      summary: Configure a new subtask
+      description: >
+        This resource creates a new subtask configuration for the
+        task with the given unique `task-id` in the path.
+        The given `unit-id` and `product-id` must match the correct
+        unique id for the provided task.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+        - $ref: '#/components/parameters/taskId'
+      requestBody:
+        $ref: '#/components/requestBodies/NewTaskBody'
+      responses:
+        '200':
+          description: A JSON list of SubTasks
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SubTask'
+      tags:
+        - "Sub Tasks"
+    put:
+      summary: Replace a subtask configuration
+      description: >
+        This resource overwrites a subtask configuration for the
+        task with the given unique `task-id` in the path.
+        The given `unit-id` and `product-id` must match the correct
+        unique id for the provided unit.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+        - $ref: '#/components/parameters/taskId'
+      requestBody:
+        $ref: '#/components/requestBodies/SubTaskBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/SubTaskResponse'
       tags:
         - "Sub Tasks"
   /products/{product-id}/{iunit-id}/{task-id}/subtasks/{subtask-id}:
     get:
-      summary: Get a product configuration
+      summary: Get a subtask configuration
       description: >
-        This resource provides the product configuration for the
-        product for the given unique product `id` in the path.
+        This resource provides the subtask configuration for the
+        subtask with the given unique `subtask-id` in the path.
+        Supplied `product-id`, `unit-id`, and `task-id` must also be correct.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+        - $ref: '#/components/parameters/taskId'
+        - $ref: '#/components/parameters/subtaskId'
       responses:
-
+        '200':
+          $ref: '#/components/responses/SubTaskResponse'
+      tags:
+        - "Sub Tasks"
+    delete:
+      summary: Delete a subtask configuration
+      description: >
+        This resource removes the subtask configuration for the
+        subtask with the given unique `subtask-id` in the path.
+        Supplied `product-id`, `unit-id`, and `task-id` must also be correct.
+      parameters:
+        - $ref: '#/components/parameters/productId'
+        - $ref: '#/components/parameters/unitId'
+        - $ref: '#/components/parameters/taskId'
+        - $ref: '#/components/parameters/subtaskId'
+      responses:
+        '204':
+          description: Successfully removed the resource, no content will be returned
       tags:
         - "Sub Tasks"
 components:
@@ -372,7 +448,14 @@ components:
             unitId:
               type: integer
         - $ref: '#/components/schemas/NewTask'
-
+    SubTask:
+      allOf:
+        - properties:
+            id:
+              type: integer
+            taskId:
+              type: integer
+        - $ref: '#/components/schemas/NewTask'
   requestBodies:
     ProductBody:
       description: A JSON object representation of a Product
@@ -410,12 +493,19 @@ components:
           schema:
             $ref: '#/components/schemas/Task'
     NewTaskBody:
-      description: A JSON object representation of a Task
+      description: A JSON object representation of a Task/SubTask
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/NewTask'
+    SubTaskBody:
+      description: A JSON object representation of a SubTask
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubTask'
   responses:
     ProductResponse:
       description: A JSON object representation of a Product
@@ -435,6 +525,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Task'
+    SubTaskResponse:
+      description: A JSON object representation of a SubTask
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubTask'
   securitySchemes:
     bearerAuth:
       type: http
@@ -462,5 +558,12 @@ components:
       schema:
         type: integer
       description: Numberic id of the task
+    subtaskId:
+      in: path
+      name: subtask-id
+      required: true
+      schema:
+        type: integer
+      description: Numberic id of the subtask
 security:
   - bearerAuth: []
