@@ -14,11 +14,9 @@ externalDocs:
   description: "Find out more about SPQ Express"
   url: "https://www.spqexpress.com"
 servers:
-  - url: http://localhost:8080 # todo remove this server when publishing externally
-    description: Development server
-  - url: http://api.spqexpress.com
+  - url: https://api.spqexpress.com
     description: Production server
-  - url: http://api-uat.spqexpress.com
+  - url: https://api-uat.spqexpress.com
     description: Staging server
 tags:
 - name: Products
