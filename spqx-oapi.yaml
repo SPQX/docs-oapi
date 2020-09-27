@@ -14,6 +14,8 @@ externalDocs:
   description: "Find out more about SPQ Express"
   url: "https://www.spqexpress.com"
 servers:
+  - url: http://localhost:8080 # todo remove this server when publishing externally
+    description: Development server
   - url: https://api.spqexpress.com
     description: Production server
   - url: https://api-uat.spqexpress.com
@@ -24,18 +26,8 @@ tags:
   externalDocs:
     description: "For more information"
     url: "https://www.spqexpress.com/services/management"
-- name: Units
-  description: "Management of units used for price calculation"
-  externalDocs:
-    description: "For more information"
-    url: "https://www.spqexpress.com/services/management"
-- name: Tasks
-  description: "Management of tasks used for price calculation"
-  externalDocs:
-    description: "For more information"
-    url: "https://www.spqexpress.com/services/management"
-- name: Sub Tasks
-  description: "Management of sub tasks used for price calculation"
+- name: Attributes
+  description: "Management of attributes used for dynamic values within product price calculation"
   externalDocs:
     description: "For more information"
     url: "https://www.spqexpress.com/services/management"
@@ -126,7 +118,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Unit'
       tags:
-        - "Units"
+        - "Products"
     post:
       summary: Configure a new unit
       description: >
@@ -146,7 +138,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Unit'
       tags:
-        - "Units"
+        - "Products"
     put:
       summary: Replace a unit configuration
       description: >
@@ -161,7 +153,7 @@ paths:
         '200':
           $ref: '#/components/responses/UnitResponse'
       tags:
-        - "Units"
+        - "Products"
   /products/{product-id}/units/{unit-id}:
     get:
       summary: Get a unit configuration
@@ -176,7 +168,7 @@ paths:
         '200':
           $ref: '#/components/responses/UnitResponse'
       tags:
-        - "Units"
+        - "Products"
     delete:
       summary: Delete a unit configuration
       description: >
@@ -189,7 +181,7 @@ paths:
         '204':
           description: Successfully removed the resource, no content will be returned
       tags:
-        - "Units"
+        - "Products"
   /products/{product-id}/{unit-id}/tasks:
     get:
       summary: Get a list of configured tasks
@@ -209,7 +201,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
       tags:
-        - "Tasks"
+        - "Products"
     post:
       summary: Configure a new tasks
       description: >
@@ -230,7 +222,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
       tags:
-        - "Tasks"
+        - "Products"
     put:
       summary: Replace a task configuration
       description: >
@@ -246,7 +238,7 @@ paths:
         '200':
           $ref: '#/components/responses/TaskResponse'
       tags:
-        - "Tasks"
+        - "Products"
   /products/{product-id}/{unit-id}/tasks/{task-id}:
     get:
       summary: Get a task configuration
@@ -262,7 +254,7 @@ paths:
         '200':
           $ref: '#/components/responses/TaskResponse'
       tags:
-        - "Tasks"
+        - "Products"
     delete:
       summary: Delete a task configuration
       description: >
@@ -277,7 +269,7 @@ paths:
         '204':
           description: Successfully removed the resource, no content will be returned
       tags:
-        - "Tasks"
+        - "Products"
   /products/{product-id}/{unit-id}/{task-id}/subtasks:
     get:
       summary: Get a list of configured subtasks
@@ -299,7 +291,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/SubTask'
       tags:
-        - "Sub Tasks"
+        - "Products"
     post:
       summary: Configure a new subtask
       description: >
@@ -322,7 +314,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/SubTask'
       tags:
-        - "Sub Tasks"
+        - "Products"
     put:
       summary: Replace a subtask configuration
       description: >
@@ -340,7 +332,7 @@ paths:
         '200':
           $ref: '#/components/responses/SubTaskResponse'
       tags:
-        - "Sub Tasks"
+        - "Products"
   /products/{product-id}/{iunit-id}/{task-id}/subtasks/{subtask-id}:
     get:
       summary: Get a subtask configuration
@@ -357,7 +349,7 @@ paths:
         '200':
           $ref: '#/components/responses/SubTaskResponse'
       tags:
-        - "Sub Tasks"
+        - "Products"
     delete:
       summary: Delete a subtask configuration
       description: >
@@ -373,7 +365,76 @@ paths:
         '204':
           description: Successfully removed the resource, no content will be returned
       tags:
-        - "Sub Tasks"
+        - "Products"
+  /attributes:
+    get:
+      summary: List attribute configurations
+      description: >
+        This resource provides a list of attributes in the system.
+        Each attribute will be unique by numeric `id`.
+      responses:
+        '200':
+          description: A JSON object representation of an Attribute
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Attribute'
+        '401':
+          description: Authorization header is missing or invalid
+      tags:
+        - "Attributes"
+    post:
+      summary: Create an attribute configuration
+      description: >
+        This resource creates a new attribute configuration in the system.
+        The attribute will be saved with the provided configuration and a
+        unique `id` generated by the system.
+      requestBody:
+        $ref: '#/components/requestBodies/NewAttributeBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/AttributeResponse'
+      tags:
+        - "Attributes"
+    put:
+      summary: Replace a attribute configuration
+      description: >
+        This resource overwrites an attribute configuration in the system.
+        The attribute will be saved with the provided configuration overwriting
+        the existing attribute found by the unique `id`.
+      requestBody:
+        $ref: '#/components/requestBodies/AttributeBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/AttributeResponse'
+      tags:
+        - "Attributes"
+  /attributes/{attribute-id}:
+    get:
+      summary: Get an attribute configuration
+      description: >
+        This resource provides the attribute configuration for the
+        attribute with the given unique `id` in the path.
+      parameters:
+        - $ref: '#/components/parameters/attributeId'
+      responses:
+        '200':
+          $ref: '#/components/responses/AttributeResponse'
+      tags:
+        - "Attributes"
+    delete:
+      summary: Remove a attribute configuration
+      description: >
+        Removes the attribute configuration for the given
+        unique attribute `id` in the path.
+      parameters:
+        - $ref: '#/components/parameters/attributeId'
+      responses:
+        '204':
+          description: Successfully removed the resource, no content will be returned
+      tags:
+        - "Attributes"
 components:
   schemas: # todo required fields
     NewProduct:
@@ -454,6 +515,19 @@ components:
             taskId:
               type: integer
         - $ref: '#/components/schemas/NewTask'
+    NewAttribute:
+      type: object
+      properties:
+        displayName:
+          type: string
+        category:
+          type: string
+    Attribute:
+      allOf:
+        - properties:
+            id:
+              type: integer
+        - $ref: '#/components/schemas/NewAttribute'
   requestBodies:
     ProductBody:
       description: A JSON object representation of a Product
@@ -504,6 +578,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SubTask'
+    AttributeBody:
+      description: A JSON object representation of an Attribute
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Attribute'
+    NewAttributeBody:
+      description: A JSON object representation of an Attribute
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewAttribute'
   responses:
     ProductResponse:
       description: A JSON object representation of a Product
@@ -529,6 +617,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SubTask'
+    AttributeResponse:
+      description: A JSON object representation of an Attribute
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Attribute'
   securitySchemes:
     bearerAuth:
       type: http
@@ -563,5 +657,12 @@ components:
       schema:
         type: integer
       description: Numberic id of the subtask
+    attributeId:
+      in: path
+      name: attribute-id
+      required: true
+      schema:
+        type: integer
+      description: Numberic id of the attribute
 security:
   - bearerAuth: []
