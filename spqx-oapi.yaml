@@ -458,15 +458,15 @@ components:
         UOM:
           type: string
         countryAttribute:
-          type: string #todo this should be an attribute
+          type: integer
         country:
           type: string
         startDateAttribute:
-          type: string
+          type: integer
         startDate:
           type: string
         endDateAttribute:
-          type: string
+          type: integer
         endDate:
           type: string
         quantityFormula:
@@ -483,8 +483,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/NewUnit'
         - properties:
-            resourceAttr:
-              type: string
+            resourceAttribute:
+              type: integer
             resource:
               type: string
             hoursFormula:
@@ -519,6 +519,8 @@ components:
       type: object
       properties:
         displayName:
+          type: string
+        defaultValue:
           type: string
         category:
           type: string
