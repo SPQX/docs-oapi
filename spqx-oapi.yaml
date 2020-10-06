@@ -21,6 +21,7 @@ servers:
   - url: https://api-uat.spqexpress.com
     description: Staging server
 tags:
+- name: Auth
 - name: Products
   description: "Management of products used for price calculation"
   externalDocs:
@@ -32,6 +33,16 @@ tags:
     description: "For more information"
     url: "https://www.spqexpress.com/services/management"
 paths:
+  /auth:
+    post:
+      summary: Obtain an access and refresh token
+      requestBody:
+        $ref: '#/components/requestBodies/AuthBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthResponse'
+      tags:
+        - "Auth"
   /products:
     get:
       summary: List product configurations
@@ -531,6 +542,16 @@ components:
               type: integer
         - $ref: '#/components/schemas/NewAttribute'
   requestBodies:
+    AuthBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              username:
+                type: string
+              password:
+                type: string
     ProductBody:
       description: A JSON object representation of a Product
       required: true
@@ -595,6 +616,18 @@ components:
           schema:
             $ref: '#/components/schemas/NewAttribute'
   responses:
+    AuthResponse:
+      description: Authentication tokens after a successful auth request
+      content:
+        application/json:
+          schema:
+            properties:
+              accessToken:
+                type: string
+              refreshToken:
+                type: string
+              expiresIn:
+                type: integer
     ProductResponse:
       description: A JSON object representation of a Product
       content:
